@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>골든케어 댕댕이 🐾 | 노령견 정밀 케어 AI</title>
+  <meta name="description" content="10세 이상 노령견의 몸무게와 질환을 고려한 AI 기반 정밀 영양 간식 계산기. 과학적 근거의 맞춤형 급여량 가이드." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ✨ 배경 파티클 캔버스 -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- 🐾 헤더 -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <div class="logo-paw">🐾</div>
+        <div class="header-titles">
+          <h1 class="header-title">골든케어 댕댕이</h1>
+          <p class="header-subtitle">노령견을 위한 세심한 영양 계산기</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        AI 분석 준비 완료
+      </div>
+    </div>
+  </header>
+
+  <!-- 📋 메인 컨텐츠 -->
+  <main class="app-main">
+    <div class="dashboard-grid">
+
+      <!-- 🐶 왼쪽: 반려견 프로필 -->
+      <section class="card profile-card" aria-label="반려견 프로필 입력">
+        <div class="card-header">
+          <div class="card-icon">🐶</div>
+          <div>
+            <h2 class="card-title">반려견 프로필</h2>
+            <p class="card-desc">댕댕이의 정보를 입력해주세요</p>
+          </div>
+        </div>
+
+        <div class="profile-fields">
+          <div class="field-group">
+            <label for="dog-age" class="field-label">
+              <span class="label-icon">🎂</span>나이
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="dog-age"
+                class="field-input"
+                value="14"
+                min="1"
+                max="25"
+                aria-label="반려견 나이 입력 (세)"
+              />
+              <span class="input-unit">세</span>
+            </div>
+            <p class="field-hint" id="age-hint"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="dog-weight" class="field-label">
+              <span class="label-icon">⚖️</span>몸무게
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="dog-weight"
+                class="field-input"
+                value="5.8"
+                min="0.5"
+                max="80"
+                step="0.1"
+                aria-label="반려견 몸무게 입력 (kg)"
+              />
+              <span class="input-unit">kg</span>
+            </div>
+            <p class="field-hint" id="weight-hint"></p>
+          </div>
+        </div>
+
+        <div class="condition-section">
+          <p class="condition-title">
+            <span class="label-icon">⚕️</span>주의 질환 / 증상
+            <span class="condition-sub">(해당되는 것 모두 선택)</span>
+          </p>
+          <div class="condition-grid" role="group" aria-label="질환 선택">
+            <label class="condition-chip" for="cond-kidney">
+              <input type="checkbox" id="cond-kidney" value="kidney" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">🫘</span>
+                <span class="chip-label">신장 질환</span>
+              </span>
+            </label>
+            <label class="condition-chip" for="cond-diabetes">
+              <input type="checkbox" id="cond-diabetes" value="diabetes" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">🩸</span>
+                <span class="chip-label">당뇨</span>
+              </span>
+            </label>
+            <label class="condition-chip" for="cond-joint">
+              <input type="checkbox" id="cond-joint" value="joint" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">🦴</span>
+                <span class="chip-label">관절 / 슬개골</span>
+              </span>
+            </label>
+            <label class="condition-chip" for="cond-digestion">
+              <input type="checkbox" id="cond-digestion" value="digestion" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">🫄</span>
+                <span class="chip-label">소화 불량</span>
+              </span>
+            </label>
+            <label class="condition-chip" for="cond-heart">
+              <input type="checkbox" id="cond-heart" value="heart" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">❤️</span>
+                <span class="chip-label">심장 질환</span>
+              </span>
+            </label>
+            <label class="condition-chip" for="cond-liver">
+              <input type="checkbox" id="cond-liver" value="liver" class="condition-checkbox" />
+              <span class="chip-content">
+                <span class="chip-icon">🫀</span>
+                <span class="chip-label">간 질환</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="rer-display" id="rer-display" aria-live="polite">
+          <div class="rer-label">기초대사량(RER)</div>
+          <div class="rer-value" id="rer-value">— kcal/일</div>
+          <div class="rer-snack-limit">간식 허용 칼로리: <strong id="snack-limit">— kcal</strong></div>
+        </div>
+      </section>
+
+      <!-- 🍠 오른쪽: 간식 선택기 -->
+      <section class="card snack-card" aria-label="간식 선택">
+        <div class="card-header">
+          <div class="card-icon">🍽️</div>
+          <div>
+            <h2 class="card-title">오늘의 간식 선택</h2>
+            <p class="card-desc">급여할 간식을 선택하거나 직접 입력해주세요</p>
+          </div>
+        </div>
+
+        <div class="snack-grid" role="group" aria-label="간식 종류 선택">
+          <button class="snack-btn" data-snack="고구마" id="snack-goguma" aria-pressed="false">
+            <span class="snack-emoji">🍠</span>
+            <span class="snack-name">고구마</span>
+          </button>
+          <button class="snack-btn" data-snack="북어채" id="snack-bugeo" aria-pressed="false">
+            <span class="snack-emoji">🐟</span>
+            <span class="snack-name">북어채</span>
+          </button>
+          <button class="snack-btn" data-snack="브로콜리" id="snack-broccoli" aria-pressed="false">
+            <span class="snack-emoji">🥦</span>
+            <span class="snack-name">브로콜리</span>
+          </button>
+          <button class="snack-btn" data-snack="사과" id="snack-apple" aria-pressed="false">
+            <span class="snack-emoji">🍎</span>
+            <span class="snack-name">사과</span>
+          </button>
+          <button class="snack-btn" data-snack="닭가슴살" id="snack-chicken" aria-pressed="false">
+            <span class="snack-emoji">🍗</span>
+            <span class="snack-name">닭가슴살</span>
+          </button>
+          <button class="snack-btn" data-snack="당근" id="snack-carrot" aria-pressed="false">
+            <span class="snack-emoji">🥕</span>
+            <span class="snack-name">당근</span>
+          </button>
+          <button class="snack-btn" data-snack="블루베리" id="snack-blueberry" aria-pressed="false">
+            <span class="snack-emoji">🫐</span>
+            <span class="snack-name">블루베리</span>
+          </button>
+          <button class="snack-btn" data-snack="두부" id="snack-tofu" aria-pressed="false">
+            <span class="snack-emoji">🤍</span>
+            <span class="snack-name">두부</span>
+          </button>
+          <button class="snack-btn" data-snack="바나나" id="snack-banana" aria-pressed="false">
+            <span class="snack-emoji">🍌</span>
+            <span class="snack-name">바나나</span>
+          </button>
+        </div>
+
+        <div class="custom-input-section">
+          <label for="custom-snack" class="field-label">
+            <span class="label-icon">✏️</span>직접 입력
+          </label>
+          <div class="custom-input-wrapper">
+            <input
+              type="text"
+              id="custom-snack"
+              class="custom-input"
+              placeholder="간식 이름을 직접 입력하세요..."
+              aria-label="간식 직접 입력"
+              maxlength="30"
+            />
+            <button class="custom-add-btn" id="custom-add-btn" aria-label="간식 추가">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="selected-snacks" id="selected-snacks" aria-live="polite">
+          <p class="selected-label">선택된 간식</p>
+          <div class="selected-tags" id="selected-tags">
+            <span class="no-selection-hint">위에서 간식을 선택해주세요 🐾</span>
+          </div>
+        </div>
+
+        <button class="analyze-btn" id="analyze-btn" aria-label="AI 정밀 분석 시작">
+          <span class="analyze-btn-inner" id="analyze-btn-inner">
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">AI 정밀 분석 스타트</span>
+          </span>
+          <div class="loading-spinner" id="loading-spinner" aria-hidden="true">
+            <div class="spinner-paw">🐾</div>
+          </div>
+        </button>
+      </section>
+
+    </div><!-- /dashboard-grid -->
+
+    <!-- 📊 분석 결과 영역 -->
+    <section class="results-section" id="results-section" aria-live="polite" aria-label="AI 분석 결과">
+      <div class="results-placeholder" id="results-placeholder">
+        <div class="placeholder-icon">🔍</div>
+        <p class="placeholder-text">프로필과 간식을 선택하고<br/><strong>AI 정밀 분석</strong>을 시작해보세요</p>
+        <div class="placeholder-paws">🐾 🐾 🐾</div>
+      </div>
+      <div class="results-content" id="results-content" style="display:none;">
+        <!-- JS로 동적 생성 -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>🐾 <strong>골든케어 댕댕이</strong> · 본 결과는 참고용이며, 정확한 급여는 수의사와 상담하세요.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
