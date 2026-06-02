@@ -625,4 +625,163 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   `;
   document.head.appendChild(style);
+
+  /* ────────────────────────────────────────────────────────────
+     9. 🐶 귀여운 강아지 사진 갤러리
+     ──────────────────────────────────────────────────────────── */
+  const galleryTrack   = document.getElementById('gallery-track');
+  const galleryRefresh = document.getElementById('gallery-refresh');
+  const galleryPrev    = document.getElementById('gallery-prev');
+  const galleryNext    = document.getElementById('gallery-next');
+  const galleryModal   = document.getElementById('gallery-modal');
+  const galleryModalImg   = document.getElementById('gallery-modal-img');
+  const galleryModalClose = document.getElementById('gallery-modal-close');
+
+  let allDogPhotos = [];
+  let currentPage  = 0;
+  const PHOTOS_PER_PAGE = 4;
+
+  // 귀여운 견종 이름 매핑
+  const breedNames = {
+    'retriever-golden': '골든 리트리버 🥇',
+    'pomeranian': '포메라니안 🦊',
+    'shihtzu': '시츄 🎀',
+    'corgi-cardigan': '코기 💛',
+    'samoyed': '사모예드 ☁️',
+    'maltese': '말티즈 🤍',
+    'poodle-toy': '토이 푸들 🧸',
+    'poodle-miniature': '미니어처 푸들 🧸',
+    'shiba': '시바견 🐕',
+    'beagle': '비글 🐶',
+    'husky': '허스키 🐺',
+    'labrador': '래브라도르 🌟',
+    'papillon': '파피용 🦋',
+    'havanese': '하바니즈 🌸',
+    'bichon-frise': '비숑 프리제 ☁️',
+    'akita': '아키타 🇯🇵',
+    'dachshund': '닥스훈트 🌭',
+    'chihuahua': '치와와 💕',
+    'spitz-japanese': '스피츠 ⚪',
+    'pug': '퍼그 🐾',
+  };
+
+  function getBreedFromUrl(url) {
+    const match = url.match(/breeds\/([^/]+)\//);
+    if (!match) return '귀여운 댕댕이 🐾';
+    const breed = match[1];
+    return breedNames[breed] || breed.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) + ' 🐾';
+  }
+
+  async function loadDogPhotos() {
+    galleryTrack.innerHTML = `
+      <div class="gallery-loading">
+        <div class="gallery-loading-paw">🐾</div>
+        <p>댕댕이 사진을 불러오는 중...</p>
+      </div>
+    `;
+
+    try {
+      const response = await fetch('https://dog.ceo/api/breeds/image/random/12');
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        allDogPhotos = data.message;
+        currentPage = 0;
+        renderGalleryPage();
+      } else {
+        showGalleryError();
+      }
+    } catch (err) {
+      console.error('강아지 사진 로드 실패:', err);
+      showGalleryError();
+    }
+  }
+
+  function showGalleryError() {
+    galleryTrack.innerHTML = `
+      <div class="gallery-loading">
+        <div class="gallery-loading-paw">😿</div>
+        <p>사진을 불러올 수 없어요. 다시 시도해 주세요!</p>
+      </div>
+    `;
+  }
+
+  function renderGalleryPage() {
+    const start = currentPage * PHOTOS_PER_PAGE;
+    const photos = allDogPhotos.slice(start, start + PHOTOS_PER_PAGE);
+
+    galleryTrack.innerHTML = photos.map((url, i) => {
+      const breed = getBreedFromUrl(url);
+      return `
+        <div class="gallery-card" style="animation-delay: ${i * 0.08}s" data-src="${url}">
+          <img src="${url}" alt="${breed}" loading="lazy" />
+          <div class="gallery-card-overlay">
+            <span class="gallery-card-label">🐾 ${breed}</span>
+          </div>
+          <div class="heart-burst">❤️</div>
+        </div>
+      `;
+    }).join('');
+
+    // 클릭 → 모달 확대
+    galleryTrack.querySelectorAll('.gallery-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const src = card.dataset.src;
+        galleryModalImg.src = src;
+        galleryModal.classList.add('active');
+      });
+
+      // 더블클릭 → 하트 애니메이션
+      card.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        const heart = card.querySelector('.heart-burst');
+        heart.classList.remove('active');
+        void heart.offsetWidth; // reflow
+        heart.classList.add('active');
+      });
+    });
+  }
+
+  // 이전/다음 네비게이션
+  galleryPrev.addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      renderGalleryPage();
+    }
+  });
+
+  galleryNext.addEventListener('click', () => {
+    const maxPage = Math.ceil(allDogPhotos.length / PHOTOS_PER_PAGE) - 1;
+    if (currentPage < maxPage) {
+      currentPage++;
+      renderGalleryPage();
+    }
+  });
+
+  // 새로고침
+  galleryRefresh.addEventListener('click', () => {
+    galleryRefresh.style.transform = 'rotate(360deg) scale(0.95)';
+    setTimeout(() => { galleryRefresh.style.transform = ''; }, 400);
+    loadDogPhotos();
+  });
+
+  // 모달 닫기
+  galleryModalClose.addEventListener('click', () => {
+    galleryModal.classList.remove('active');
+  });
+
+  galleryModal.addEventListener('click', (e) => {
+    if (e.target === galleryModal) {
+      galleryModal.classList.remove('active');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && galleryModal.classList.contains('active')) {
+      galleryModal.classList.remove('active');
+    }
+  });
+
+  // 갤러리 초기 로드
+  loadDogPhotos();
 });

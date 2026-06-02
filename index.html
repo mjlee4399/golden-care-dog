@@ -32,6 +32,34 @@
     </div>
   </header>
 
+  <!-- 🐶 귀여운 강아지 사진 갤러리 -->
+  <section class="dog-gallery-section" aria-label="귀여운 강아지 사진">
+    <div class="gallery-inner">
+      <div class="gallery-header">
+        <h2 class="gallery-title">🐶 오늘의 귀여운 댕댕이들</h2>
+        <p class="gallery-subtitle">매번 새로운 귀여운 친구들을 만나보세요!</p>
+      </div>
+      <div class="gallery-track" id="gallery-track">
+        <!-- JS로 동적 생성 -->
+        <div class="gallery-loading">
+          <div class="gallery-loading-paw">🐾</div>
+          <p>댕댕이 사진을 불러오는 중...</p>
+        </div>
+      </div>
+      <div class="gallery-controls">
+        <button class="gallery-nav-btn" id="gallery-prev" aria-label="이전 사진">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="gallery-refresh-btn" id="gallery-refresh" aria-label="새 사진 불러오기">
+          🔄 새 친구 만나기
+        </button>
+        <button class="gallery-nav-btn" id="gallery-next" aria-label="다음 사진">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- 📋 메인 컨텐츠 -->
   <main class="app-main">
     <div class="dashboard-grid">
@@ -250,6 +278,12 @@
   <footer class="app-footer">
     <p>🐾 <strong>골든케어 댕댕이</strong> · 본 결과는 참고용이며, 정확한 급여는 수의사와 상담하세요.</p>
   </footer>
+
+  <!-- 🖼️ 사진 확대 모달 -->
+  <div class="gallery-modal" id="gallery-modal">
+    <button class="gallery-modal-close" id="gallery-modal-close" aria-label="닫기">✕</button>
+    <img src="" alt="강아지 확대 사진" id="gallery-modal-img" />
+  </div>
 
   <script src="app.js"></script>
 </body>

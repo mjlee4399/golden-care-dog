@@ -872,6 +872,289 @@ body {
   line-height: 1.65;
 }
 
+/* ---------- 14.5 강아지 사진 갤러리 ---------- */
+.dog-gallery-section {
+  position: relative;
+  z-index: 5;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 0;
+}
+
+.gallery-inner {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  padding: 1.8rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--brown-100);
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f5c842, #8b6914, #c9a97a, #f5c842);
+  background-size: 300% 100%;
+  animation: galleryShimmer 4s ease infinite;
+}
+
+@keyframes galleryShimmer {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 100% 0%; }
+  100% { background-position: 0% 0%; }
+}
+
+.gallery-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.gallery-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.gallery-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+/* 갤러리 트랙 */
+.gallery-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  min-height: 200px;
+}
+
+.gallery-loading {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  padding: 2rem;
+}
+
+.gallery-loading-paw {
+  font-size: 2.5rem;
+  animation: pawSpin 0.9s linear infinite;
+}
+
+/* 개별 사진 카드 */
+.gallery-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--ivory-200);
+}
+
+.gallery-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(139, 105, 20, 0.25);
+  border-color: var(--brown-200);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-card:hover img {
+  transform: scale(1.1);
+}
+
+.gallery-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(74, 53, 9, 0.7) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  padding: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .gallery-card-overlay {
+  opacity: 1;
+}
+
+.gallery-card-label {
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  padding: 0.3rem 0.65rem;
+  border-radius: 50px;
+}
+
+/* 하트 애니메이션 */
+.gallery-card .heart-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gallery-card .heart-burst.active {
+  animation: heartPop 0.6s ease forwards;
+}
+
+@keyframes heartPop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  40%  { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+}
+
+/* 사진 등장 애니메이션 */
+@keyframes galleryCardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gallery-card {
+  animation: galleryCardIn 0.5s ease both;
+}
+
+.gallery-card:nth-child(2) { animation-delay: 0.08s; }
+.gallery-card:nth-child(3) { animation-delay: 0.16s; }
+.gallery-card:nth-child(4) { animation-delay: 0.24s; }
+
+/* 갤러리 컨트롤 */
+.gallery-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.gallery-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ivory-100);
+  border: 1.5px solid var(--brown-100);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mid);
+  transition: var(--transition);
+}
+
+.gallery-nav-btn:hover {
+  background: var(--brown-200);
+  color: #fff;
+  border-color: var(--brown-200);
+  transform: scale(1.1);
+}
+
+.gallery-refresh-btn {
+  padding: 0.5rem 1.4rem;
+  background: linear-gradient(135deg, #8b6914, #c9a97a);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 3px 12px rgba(139, 105, 20, 0.3);
+}
+
+.gallery-refresh-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(139, 105, 20, 0.4);
+}
+
+.gallery-refresh-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* 풀스크린 모달 */
+.gallery-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gallery-modal img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.gallery-modal.active img {
+  animation: modalZoomIn 0.35s ease;
+}
+
+@keyframes modalZoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.gallery-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.gallery-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg) scale(1.1);
+}
+
 /* ---------- 15. 푸터 ---------- */
 .app-footer {
   position: relative;
@@ -906,6 +1189,12 @@ body {
   }
 
   .results-content { padding: 1.5rem 1rem; }
+
+  .gallery-track {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gallery-title { font-size: 1.1rem; }
 }
 
 @media (max-width: 480px) {
@@ -914,4 +1203,13 @@ body {
   .condition-grid { grid-template-columns: 1fr 1fr; }
   .snack-grid { grid-template-columns: repeat(3, 1fr); }
   .profile-fields { grid-template-columns: 1fr 1fr; }
+
+  .gallery-track {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .dog-gallery-section { padding: 1rem 1rem 0; }
+  .gallery-inner { padding: 1.2rem; }
 }
+
